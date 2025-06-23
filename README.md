@@ -89,6 +89,7 @@ The application uses a **desktop-first responsive approach** with standardized b
 
 - Uses dummy data for visualization (no backend integration)
 - Network error states not implemented due to mock data usage
+- Some spacing values like gap, padding may be different from figma because in figma some of these values are ambiguous
 
 ## Development Time
 
