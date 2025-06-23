@@ -62,16 +62,18 @@ npm run dev
 
 ## Project Structure
 
-src/
-├── components/ # Reusable UI components
-│ ├── auth/ # Authentication components
-│ ├── dashboard/ # Dashboard-specific components
-│ └── header/ # Header components
-├── firebase/ # Firebase configuration
-├── hooks/ # Custom React hooks
-├── slices/ # Redux slices
-├── styles/ # Shared styles
-└── types/ # TypeScript type definitions
+```
+  src/
+  ├── components/ # Reusable UI components
+  │ ├── auth/ # Authentication components
+  │ ├── dashboard/ # Dashboard-specific components
+  │ └── header/ # Header components
+  ├── firebase/ # Firebase configuration
+  ├── hooks/ # Custom React hooks
+  ├── slices/ # Redux slices
+  ├── styles/ # Shared styles
+  └── types/ # TypeScript type definitions
+```
 
 ## Responsive Design
 
