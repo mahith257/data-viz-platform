@@ -24,8 +24,10 @@
  * dispatch(setActiveTab(EHeaderTabs.FLEET_SIZING));
  * ```
  */
-export enum EHeaderTabs {
-  CHARGING_STATIONS = "Charging Stations",
-  FLEET_SIZING = "Fleet Sizing",
-  PARKING = "Parking",
-}
+export const EHeaderTabs = {
+  CHARGING_STATIONS: "Charging Stations",
+  FLEET_SIZING: "Fleet Sizing",
+  PARKING: "Parking",
+} as const;
+
+export type EHeaderTabs = (typeof EHeaderTabs)[keyof typeof EHeaderTabs];
