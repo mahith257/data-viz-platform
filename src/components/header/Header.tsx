@@ -22,6 +22,10 @@ const HeaderContainer = styled.div<{ theme: string }>`
   align-items: center;
   justify-content: space-between;
   position: relative;
+
+  ${MEDIA_QUERIES.belowDesktop} {
+    justify-content: flex-end;
+  }
 `;
 
 /**
