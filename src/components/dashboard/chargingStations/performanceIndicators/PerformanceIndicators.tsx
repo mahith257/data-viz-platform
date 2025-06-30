@@ -4,6 +4,7 @@ import Help from "../../../../assets/icons/Help";
 import Plus from "../../../../assets/icons/Plus";
 import { Button } from "../../../../styles/shared";
 import { MEDIA_QUERIES } from "../../../../styles/breakpoints";
+import { useAppSelector, type RootState } from "../../../../store";
 
 const Container = styled.div`
   width: calc(40% - 25px);
@@ -49,57 +50,68 @@ const IndicatorsContainer = styled.div`
   }
 `;
 
-const IndicatorContainer = styled.div`
+const IndicatorContainer = styled.div<{ theme: string }>`
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 30px;
-  background-color: #222324;
+  background-color: ${({ theme }) =>
+    theme === "light" ? "#f5f5f5" : "#222324"};
   border-radius: 5px;
-  border: 1px solid #525252;
+  border: 1px solid
+    ${({ theme }) => (theme === "light" ? "#c0c0c0" : "#525252")};
 
   ${MEDIA_QUERIES.belowLarge} {
     width: 100%;
   }
 `;
 
-const IndicatorHeader = styled.div`
+const IndicatorHeader = styled.div<{ theme: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: ${({ theme }) => (theme === "light" ? "#000000" : "#ffffff")};
 `;
 
-const IndicatorValue = styled.h1`
+const IndicatorValue = styled.h1<{ theme: string }>`
   margin-top: auto;
   align-self: flex-end;
+  color: ${({ theme }) => (theme === "light" ? "#000000" : "#ffffff")};
 `;
 
-const IndicatorSubtitle = styled.p`
+const IndicatorSubtitle = styled.p<{ theme: string }>`
   font-size: 12px;
   line-height: 150%;
   font-weight: 300;
-  color: #bbbbbb;
+  color: ${({ theme }) => (theme === "light" ? "#666666" : "#bbbbbb")};
 `;
 
 const PerformanceIndicators = () => {
+  const activeTheme = useAppSelector((state: RootState) => state.theme.theme);
   return (
     <Container>
       <Header>
-        <h3>Key Performance Indicators</h3>
-        <Button>
+        <h3 style={{ color: activeTheme === "light" ? "#000000" : "#ffffff" }}>
+          Key Performance Indicators
+        </h3>
+        <Button theme={activeTheme}>
           Variables
           <Plus />
         </Button>
       </Header>
       <IndicatorsContainer>
         {PERFORMANCE_INDICATORS.map((indicator) => (
-          <IndicatorContainer key={indicator.title}>
-            <IndicatorHeader>
+          <IndicatorContainer key={indicator.title} theme={activeTheme}>
+            <IndicatorHeader theme={activeTheme}>
               <h5>{indicator.title}</h5>
               <Help />
             </IndicatorHeader>
-            <IndicatorSubtitle>{indicator.subtitle}</IndicatorSubtitle>
-            <IndicatorValue>{indicator.value}</IndicatorValue>
+            <IndicatorSubtitle theme={activeTheme}>
+              {indicator.subtitle}
+            </IndicatorSubtitle>
+            <IndicatorValue theme={activeTheme}>
+              {indicator.value}
+            </IndicatorValue>
           </IndicatorContainer>
         ))}
       </IndicatorsContainer>

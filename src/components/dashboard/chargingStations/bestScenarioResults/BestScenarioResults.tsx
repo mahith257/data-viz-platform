@@ -4,6 +4,7 @@ import { BEST_SCENARIO_RESULTS } from "./constants";
 import { GoKebabHorizontal } from "react-icons/go";
 import { FaChevronDown } from "react-icons/fa";
 import { useState } from "react";
+import { useAppSelector, type RootState } from "../../../../store";
 
 const Container = styled.div`
   width: 100%;
@@ -12,11 +13,14 @@ const Container = styled.div`
   gap: 24px;
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ theme: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #dafd7f;
+  color: ${({ theme }) => (theme === "light" ? "#000000" : "#dafd7f")};
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: ${({ theme }) =>
+    theme === "light" ? "#f5f5f5" : "#161618"};
 `;
 
 const HeaderLeft = styled.div`
@@ -41,33 +45,35 @@ const FlexColumn = styled.div<{ $isOpen: boolean }>`
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
 `;
 
-const BestScenarioResult = styled.div`
+const BestScenarioResult = styled.div<{ theme: string }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 24px;
-  color: #c9ff3b;
+  color: ${({ theme }) => (theme === "light" ? "#000000" : "#c9ff3b")};
   border-radius: 6px;
-  border: 0.5px solid #c8e972;
+  border: 0.5px solid
+    ${({ theme }) => (theme === "light" ? "#4caf50" : "#c8e972")};
   font-size: 16px;
   font-weight: 500;
   line-height: 150%;
   transition: all 0.2s ease-in-out;
 `;
 
-const Kebab = styled(GoKebabHorizontal)`
+const Kebab = styled(GoKebabHorizontal)<{ theme: string }>`
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 
   &:hover {
     transform: scale(1.1);
-    color: #dafd7f;
+    color: ${({ theme }) => (theme === "light" ? "#4caf50" : "#dafd7f")};
   }
 `;
 
-const ChevronContainer = styled.div<{ $isOpen: boolean }>`
+const ChevronContainer = styled.div<{ $isOpen: boolean; theme: string }>`
   cursor: pointer;
-  border: 1px solid #c8e972;
+  border: 1px solid
+    ${({ theme }) => (theme === "light" ? "#4caf50" : "#c8e972")};
   border-radius: 56px;
   display: flex;
   align-items: center;
@@ -77,8 +83,14 @@ const ChevronContainer = styled.div<{ $isOpen: boolean }>`
   transition: all 0.3s ease-in-out;
 
   &:hover {
-    background-color: rgba(200, 233, 114, 0.1);
-    box-shadow: 0 0 10px rgba(200, 233, 114, 0.3);
+    background-color: ${({ theme }) =>
+      theme === "light"
+        ? "rgba(76, 175, 80, 0.1)"
+        : "rgba(200, 233, 114, 0.1)"};
+    box-shadow: ${({ theme }) =>
+      theme === "light"
+        ? "0 0 10px rgba(76, 175, 80, 0.3)"
+        : "0 0 10px rgba(200, 233, 114, 0.3)"};
   }
 
   svg {
@@ -89,6 +101,7 @@ const ChevronContainer = styled.div<{ $isOpen: boolean }>`
 `;
 
 const BestScenarioResults = () => {
+  const activeTheme = useAppSelector((state: RootState) => state.theme.theme);
   const [showResults, setShowResults] = useState<boolean>(true);
 
   const handleShowResults = () => {
@@ -96,22 +109,33 @@ const BestScenarioResults = () => {
   };
 
   return (
-    <Container>
-      <Header>
+    <Container theme={activeTheme}>
+      <Header theme={activeTheme}>
         <HeaderLeft>
-          <AiGenerate />
+          <AiGenerate fill={activeTheme === "light" ? "#000000" : "#dafd7f"} />
           <h3>Best Scenario Results</h3>
         </HeaderLeft>
-        <ChevronContainer $isOpen={showResults} onClick={handleShowResults}>
-          <FaChevronDown color="#c8e972" size={16} />
+        <ChevronContainer
+          $isOpen={showResults}
+          theme={activeTheme}
+          onClick={handleShowResults}
+        >
+          <FaChevronDown
+            color={activeTheme === "light" ? "#4caf50" : "#c8e972"}
+            size={16}
+          />
         </ChevronContainer>
       </Header>
 
       <FlexColumn $isOpen={showResults}>
         {BEST_SCENARIO_RESULTS.map((result) => (
-          <BestScenarioResult key={result}>
+          <BestScenarioResult key={result} theme={activeTheme}>
             {result}
-            <Kebab color="#C9FF3B" size={16} />
+            <Kebab
+              theme={activeTheme}
+              color={activeTheme === "light" ? "#4caf50" : "#C9FF3B"}
+              size={16}
+            />
           </BestScenarioResult>
         ))}
       </FlexColumn>

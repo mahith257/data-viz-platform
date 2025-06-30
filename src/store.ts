@@ -20,6 +20,7 @@ import {
   useSelector,
   type TypedUseSelectorHook,
 } from "react-redux";
+import themeSlice from "./slices/themeSlice";
 
 /**
  * Main Redux store configuration
@@ -31,6 +32,7 @@ const store = configureStore({
   reducer: {
     home: homeSlice,
     auth: authSlice,
+    theme: themeSlice,
   },
 });
 

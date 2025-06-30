@@ -35,6 +35,7 @@ import { HEADER_TABS_TO_DASHBOARD_MAP } from "./constants";
  */
 const Dashboard = () => {
   // Get current active tab from Redux store
+
   const activeTab = useAppSelector((state: RootState) => state.home.activeTab);
 
   // Return the corresponding dashboard component for the active tab

@@ -4,17 +4,19 @@ import { setActiveTab } from "../../slices/homeSlice";
 import { EHeaderTabs } from "./types";
 import { MdSearch, MdMenu } from "react-icons/md";
 import { useState, useEffect, useRef } from "react";
-import { InputContainer, SearchInput } from "../../styles/shared";
+import { Button, InputContainer, SearchInput } from "../../styles/shared";
 import { MEDIA_QUERIES } from "../../styles/breakpoints";
+import { setTheme } from "../../slices/themeSlice";
 
 /**
  * Main application header container with responsive design
  * Uses desktop-first approach with standardized breakpoints
  */
-const HeaderContainer = styled.div`
+const HeaderContainer = styled.div<{ theme: string }>`
   width: 100%;
   height: 87px;
-  background-color: #0e0d0d;
+  background-color: ${({ theme }) =>
+    theme === "light" ? "#f5f5f5" : "#161618"};
   padding: 20px 24px;
   display: flex;
   align-items: center;
@@ -51,14 +53,24 @@ const HeaderRight = styled.div`
   }
 `;
 
+const HeaderDesktopRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 21px;
+
+  ${MEDIA_QUERIES.belowDesktop} {
+    display: none;
+  }
+`;
+
 /**
  * Hamburger menu icon for mobile navigation
  * Toggles mobile menu visibility
  */
-const MenuIcon = styled.div`
+const MenuIcon = styled.div<{ theme: string }>`
   display: none;
   cursor: pointer;
-  color: #ffffff;
+  color: ${({ theme }) => (theme === "light" ? "#000000" : "#ffffff")};
 
   ${MEDIA_QUERIES.belowDesktop} {
     display: flex;
@@ -72,7 +84,7 @@ const MenuIcon = styled.div`
  * Mobile dropdown menu container
  * Positioned absolutely below header on mobile screens
  */
-const MobileMenu = styled.div<{ $isOpen: boolean }>`
+const MobileMenu = styled.div<{ $isOpen: boolean; theme: string }>`
   display: none;
 
   ${MEDIA_QUERIES.belowDesktop} {
@@ -80,8 +92,10 @@ const MobileMenu = styled.div<{ $isOpen: boolean }>`
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: #0e0d0d;
-    border: 1px solid #5a5a5a;
+    background-color: ${({ theme }) =>
+      theme === "light" ? "#ffffff" : "#0e0d0d"};
+    border: 1px solid
+      ${({ theme }) => (theme === "light" ? "#c0c0c0" : "#5a5a5a")};
     border-radius: 4px;
     min-width: 200px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -93,37 +107,41 @@ const MobileMenu = styled.div<{ $isOpen: boolean }>`
  * Individual header navigation link/tab
  * Supports both desktop and mobile variants with different styling
  */
-const HeaderLink = styled.div<{ $isActive: boolean; $isMobile?: boolean }>`
+const HeaderLink = styled.div<{
+  $isActive: boolean;
+  $isMobile?: boolean;
+  theme: string;
+}>`
   font-size: 16px;
   font-weight: 500;
-  color: #ffffff;
+  color: ${({ theme }) => (theme === "light" ? "#000000" : "#ffffff")};
   cursor: pointer;
   padding: 10px 20px;
 
   /* Active state styling - conditional based on mobile/desktop */
-  ${({ $isActive, $isMobile }) =>
+  ${({ $isActive, $isMobile, theme }) =>
     $isActive &&
     css`
-      background-color: #242424;
+      background-color: ${theme === "light" ? "#e0e0e0" : "#242424"};
       ${!$isMobile &&
       css`
         border-radius: 4px;
-        border: 0.67px solid #5a5a5a;
+        border: 0.67px solid ${theme === "light" ? "#c0c0c0" : "#5a5a5a"};
       `}
     `}
 
   /* Mobile-specific styling overrides */
-  ${({ $isMobile }) =>
+  ${({ $isMobile, theme }) =>
     $isMobile &&
     css`
       display: block;
       border-radius: 0;
       border: none;
-      border-bottom: 1px solid #5a5a5a;
+      border-bottom: 1px solid ${theme === "light" ? "#c0c0c0" : "#5a5a5a"};
       background-color: transparent;
 
       &:hover {
-        background-color: #242424;
+        background-color: ${theme === "light" ? "#f0f0f0" : "#242424"};
       }
     `}
 `;
@@ -146,7 +164,7 @@ const Header = () => {
   // Redux hooks for state management
   const dispatch = useAppDispatch();
   const activeTab = useAppSelector((state: RootState) => state.home.activeTab);
-
+  const activeTheme = useAppSelector((state: RootState) => state.theme.theme);
   // Local state for mobile menu visibility
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
@@ -204,7 +222,7 @@ const Header = () => {
   }, [isMobileMenuOpen]);
 
   return (
-    <HeaderContainer>
+    <HeaderContainer theme={activeTheme}>
       {/* Desktop Navigation Links */}
       <HeaderLeft>
         {Object.values(EHeaderTabs).map((link) => (
@@ -212,33 +230,53 @@ const Header = () => {
             key={link}
             onClick={() => handleTabClick(link as EHeaderTabs)}
             $isActive={activeTab === link}
+            theme={activeTheme}
           >
             {link}
           </HeaderLink>
         ))}
       </HeaderLeft>
 
-      {/* Search Input - Always Visible */}
-      <InputContainer>
-        <MdSearch size={26} color="#FFFFFF" />
-        <SearchInput type="text" placeholder="Search" />
-      </InputContainer>
+      <HeaderDesktopRight>
+        <Button
+          theme={activeTheme}
+          onClick={() =>
+            dispatch(setTheme(activeTheme === "light" ? "dark" : "light"))
+          }
+        >
+          Toggle Theme
+        </Button>
+
+        {/* Search Input - Always Visible */}
+        <InputContainer theme={activeTheme}>
+          <MdSearch
+            size={26}
+            color={activeTheme === "light" ? "#666666" : "#FFFFFF"}
+          />
+          <SearchInput theme={activeTheme} type="text" placeholder="Search" />
+        </InputContainer>
+      </HeaderDesktopRight>
 
       {/* Mobile Menu Icon */}
       <HeaderRight>
-        <MenuIcon onClick={toggleMobileMenu}>
+        <MenuIcon theme={activeTheme} onClick={toggleMobileMenu}>
           <MdMenu size={28} />
         </MenuIcon>
       </HeaderRight>
 
       {/* Mobile Dropdown Menu */}
-      <MobileMenu $isOpen={isMobileMenuOpen} ref={mobileMenuRef}>
+      <MobileMenu
+        $isOpen={isMobileMenuOpen}
+        theme={activeTheme}
+        ref={mobileMenuRef}
+      >
         {Object.values(EHeaderTabs).map((link) => (
           <HeaderLink
             key={`mobile-${link}`}
             onClick={() => handleTabClick(link as EHeaderTabs)}
             $isActive={activeTab === link}
             $isMobile={true}
+            theme={activeTheme}
           >
             {link}
           </HeaderLink>

@@ -12,6 +12,7 @@ import styled from "styled-components";
 import Sidebar from "./sidebar/Sidebar";
 import Header from "./header/Header";
 import { Outlet } from "react-router";
+import { useAppSelector, type RootState } from "../store";
 
 /**
  * Main layout container with sidebar and content area
@@ -22,6 +23,7 @@ const LayoutContainer = styled.div`
   width: 100%;
   height: 100vh;
   gap: 10px;
+  background-color: var(--background-color);
 `;
 
 /**
@@ -62,8 +64,19 @@ const LayoutRightContainer = styled.div`
  * ```
  */
 const Layout = () => {
+  const activeTheme = useAppSelector((state: RootState) => state.theme.theme);
   return (
-    <LayoutContainer>
+    <LayoutContainer
+      style={
+        {
+          "--background-color": activeTheme === "light" ? "#f5f5f5" : "#161618",
+          "--text-color": activeTheme === "light" ? "#000000" : "#ffffff",
+          "--accent-color": activeTheme === "light" ? "#4caf50" : "#c8e972",
+          "--button-text-color":
+            activeTheme === "light" ? "#000000" : "#ffffff",
+        } as React.CSSProperties
+      }
+    >
       {/* Left sidebar for navigation */}
       <Sidebar />
       <LayoutRightContainer>

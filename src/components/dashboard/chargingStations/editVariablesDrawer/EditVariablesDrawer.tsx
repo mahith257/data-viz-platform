@@ -11,6 +11,7 @@ import CO2Distribution from "./CO2Distribution";
 import { Button, InputContainer, SearchInput } from "../../../../styles/shared";
 import { IoReload } from "react-icons/io5";
 import { MEDIA_QUERIES } from "../../../../styles/breakpoints";
+import { useAppSelector, type RootState } from "../../../../store";
 
 interface IEditVariablesDrawerProps {
   onClose: () => void;
@@ -29,11 +30,13 @@ const Container = styled.div`
   z-index: 1000;
 `;
 
-const Drawer = styled.div`
+const Drawer = styled.div<{ theme: string }>`
   width: 45%;
   height: 100%;
-  background-color: #0e0d0d;
-  border-left: 1px solid #525252;
+  background-color: ${({ theme }) =>
+    theme === "light" ? "#ffffff" : "#0e0d0d"};
+  border-left: 1px solid
+    ${({ theme }) => (theme === "light" ? "#c0c0c0" : "#525252")};
   box-shadow: 0px 4px 4px 0px #00000040;
   padding: 24px;
   display: flex;
@@ -55,24 +58,28 @@ const Drawer = styled.div`
   }
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ theme: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: ${({ theme }) => (theme === "light" ? "#000000" : "#ffffff")};
 `;
 
-const Close = styled(IoMdClose)`
+const Close = styled(IoMdClose)<{ theme: string }>`
   cursor: pointer;
+  color: ${({ theme }) => (theme === "light" ? "#000000" : "#ffffff")};
 `;
 
-const VariableSelectionContainer = styled.div`
+const VariableSelectionContainer = styled.div<{ theme: string }>`
   display: flex;
   flex-direction: column;
   gap: 25px;
-  background-color: #161618;
+  background-color: ${({ theme }) =>
+    theme === "light" ? "#f8f8f8" : "#161618"};
   padding-top: 25px;
   border-radius: 5px;
-  border: 1px solid #525252;
+  border: 1px solid
+    ${({ theme }) => (theme === "light" ? "#c0c0c0" : "#525252")};
 `;
 
 const CategoryContainer = styled.div`
@@ -86,10 +93,10 @@ const CategoryContainer = styled.div`
   }
 `;
 
-const CategoryLabel = styled.p`
+const CategoryLabel = styled.p<{ theme: string }>`
   font-size: 15px;
   font-weight: 500;
-  color: #d5d5d5;
+  color: ${({ theme }) => (theme === "light" ? "#333333" : "#d5d5d5")};
 `;
 
 const VariablesContainer = styled.div`
@@ -98,24 +105,28 @@ const VariablesContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const VariableContainer = styled.div<{ selected?: boolean }>`
+const VariableContainer = styled.div<{ selected?: boolean; theme: string }>`
   border-radius: 20px;
   padding: 5px 10px;
-  border: 1px solid #eeeeee;
-  color: #d5d5d5;
+  border: 1px solid
+    ${({ theme }) => (theme === "light" ? "#c0c0c0" : "#eeeeee")};
+  color: ${({ theme }) => (theme === "light" ? "#333333" : "#d5d5d5")};
   display: flex;
   align-items: center;
   gap: 20px;
   cursor: pointer;
-  background-color: rgba(89, 89, 89, 0.3);
+  background-color: ${({ theme }) =>
+    theme === "light" ? "rgba(200, 200, 200, 0.3)" : "rgba(89, 89, 89, 0.3)"};
   font-size: 15px;
   font-weight: 400;
-  ${({ selected }) =>
+  ${({ selected, theme }) =>
     selected &&
     css`
-      border: 1px solid #c9ff3b;
-      color: rgba(200, 233, 114, 0.99);
-      background-color: #282e16;
+      border: 1px solid ${theme === "light" ? "#8bc34a" : "#c9ff3b"};
+      color: ${theme === "light" ? "#4caf50" : "rgba(200, 233, 114, 0.99)"};
+      background-color: ${theme === "light"
+        ? "rgba(76, 175, 80, 0.1)"
+        : "#282e16"};
     `}
 `;
 
@@ -126,21 +137,24 @@ const VariableIconContainer = styled.div`
   gap: 5px;
 `;
 
-const VariablesAccordionHeader = styled.div`
+const VariablesAccordionHeader = styled.div<{ theme: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 6px 24px;
-  background-color: #222324;
+  background-color: ${({ theme }) =>
+    theme === "light" ? "#f0f0f0" : "#222324"};
   border-radius: 4px;
   cursor: pointer;
-  border: 1px solid #525252;
-  color: #c8e972;
+  border: 1px solid
+    ${({ theme }) => (theme === "light" ? "#c0c0c0" : "#525252")};
+  color: ${({ theme }) => (theme === "light" ? "#4caf50" : "#c8e972")};
 `;
 
-const ChevronContainer = styled.div`
+const ChevronContainer = styled.div<{ theme: string }>`
   cursor: pointer;
-  border: 1px solid #c8e972;
+  border: 1px solid
+    ${({ theme }) => (theme === "light" ? "#4caf50" : "#c8e972")};
   border-radius: 56px;
   display: flex;
   align-items: center;
@@ -156,25 +170,28 @@ const ActionsContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const SearchContainer = styled(InputContainer)`
+const SearchContainer = styled(InputContainer)<{ theme: string }>`
   flex: 1;
 `;
 
-const AutofillButton = styled(Button)`
+const AutofillButton = styled(Button)<{ theme: string }>`
   padding: 10px 20px;
   font-size: 16px;
 `;
 
-const RerunButton = styled(Button)`
-  background-color: #23291e;
-  border: 0.67px solid #577113;
-  color: #c9ff3b;
+const RerunButton = styled(Button)<{ theme: string }>`
+  background-color: ${({ theme }) =>
+    theme === "light" ? "#e8f5e8" : "#23291e"};
+  border: 0.67px solid
+    ${({ theme }) => (theme === "light" ? "#4caf50" : "#577113")};
+  color: ${({ theme }) => (theme === "light" ? "#2e7d32" : "#c9ff3b")};
   box-shadow: 0px 0px 12.7px 0px #ffffff0d inset;
   font-size: 16px;
   padding: 10px 20px;
 `;
 
 const EditVariablesDrawer: FC<IEditVariablesDrawerProps> = ({ onClose }) => {
+  const activeTheme = useAppSelector((state: RootState) => state.theme.theme);
   const [variables, setVariables] = useState<IVariableCategory[]>(
     VARIABLE_CATEGORIES.map((category) => ({
       ...category,
@@ -228,29 +245,47 @@ const EditVariablesDrawer: FC<IEditVariablesDrawerProps> = ({ onClose }) => {
 
   return (
     <Container onClick={onClose}>
-      <Drawer onClick={(e) => e.stopPropagation()}>
-        <Header>
+      <Drawer theme={activeTheme} onClick={(e) => e.stopPropagation()}>
+        <Header theme={activeTheme}>
           <h3>Edit Variables</h3>
-          <Close color="#FFFFFF" size={24} onClick={onClose} />
+          <Close
+            theme={activeTheme}
+            color={activeTheme === "light" ? "#000000" : "#FFFFFF"}
+            size={24}
+            onClick={onClose}
+          />
         </Header>
         <ActionsContainer>
-          <SearchContainer>
-            <MdSearch size={26} color="#FFFFFF" />
-            <SearchInput type="text" placeholder="Search" />
+          <SearchContainer theme={activeTheme}>
+            <MdSearch
+              size={26}
+              color={activeTheme === "light" ? "#666666" : "#FFFFFF"}
+            />
+            <SearchInput theme={activeTheme} type="text" placeholder="Search" />
           </SearchContainer>
-          <AutofillButton>
-            <AiGenerate width="18" height="18" fill="#B9B9B9" />
+          <AutofillButton theme={activeTheme}>
+            <AiGenerate
+              width="18"
+              height="18"
+              fill={activeTheme === "light" ? "#666666" : "#B9B9B9"}
+            />
             Autofill
           </AutofillButton>
-          <RerunButton>
-            <IoReload width="17.5" height="15" color="#C9FF3B" />
+          <RerunButton theme={activeTheme}>
+            <IoReload
+              width="17.5"
+              height="15"
+              color={activeTheme === "light" ? "#2e7d32" : "#C9FF3B"}
+            />
             Rerun
           </RerunButton>
         </ActionsContainer>
-        <VariableSelectionContainer>
+        <VariableSelectionContainer theme={activeTheme}>
           {variables.map((category) => (
             <CategoryContainer key={category.value}>
-              <CategoryLabel>{category.label}</CategoryLabel>
+              <CategoryLabel theme={activeTheme}>
+                {category.label}
+              </CategoryLabel>
               <VariablesContainer>
                 {category.variables.map((variable) => (
                   <VariableContainer
@@ -259,6 +294,7 @@ const EditVariablesDrawer: FC<IEditVariablesDrawerProps> = ({ onClose }) => {
                       handleVariableSelect(category.value, variable.value)
                     }
                     selected={variable.selected}
+                    theme={activeTheme}
                     onMouseEnter={
                       variable.value === "co2Distribution"
                         ? handleCO2DistributionHover
@@ -275,16 +311,28 @@ const EditVariablesDrawer: FC<IEditVariablesDrawerProps> = ({ onClose }) => {
                       <AiGenerate
                         width="9.69"
                         height="9.69"
-                        fill={variable.selected ? "#c9ff3b" : "#d5d5d5"}
+                        fill={
+                          variable.selected
+                            ? activeTheme === "light"
+                              ? "#4caf50"
+                              : "#c9ff3b"
+                            : activeTheme === "light"
+                            ? "#666666"
+                            : "#d5d5d5"
+                        }
                       />
                       {variable.selected ? (
                         <MdCheck
                           width="10.21px"
                           height="7.82px"
-                          fill="#c9ff3b"
+                          fill={activeTheme === "light" ? "#4caf50" : "#c9ff3b"}
                         />
                       ) : (
-                        <GoPlus width="8.17" height="8.17" fill="#d5d5d5" />
+                        <GoPlus
+                          width="8.17"
+                          height="8.17"
+                          fill={activeTheme === "light" ? "#666666" : "#d5d5d5"}
+                        />
                       )}
                     </VariableIconContainer>
                   </VariableContainer>
@@ -292,18 +340,24 @@ const EditVariablesDrawer: FC<IEditVariablesDrawerProps> = ({ onClose }) => {
               </VariablesContainer>
             </CategoryContainer>
           ))}
-          {showCO2Distribution && <CO2Distribution />}
         </VariableSelectionContainer>
-        <VariablesAccordionHeader>
+        {showCO2Distribution && <CO2Distribution />}
+        <VariablesAccordionHeader theme={activeTheme}>
           <h4>Primary Variables</h4>
-          <ChevronContainer>
-            <FaChevronDown color="#c8e972" size={14} />
+          <ChevronContainer theme={activeTheme}>
+            <FaChevronDown
+              color={activeTheme === "light" ? "#4caf50" : "#c8e972"}
+              size={14}
+            />
           </ChevronContainer>
         </VariablesAccordionHeader>
-        <VariablesAccordionHeader>
+        <VariablesAccordionHeader theme={activeTheme}>
           <h4>Secondary Variables</h4>
-          <ChevronContainer>
-            <FaChevronDown color="#c8e972" size={14} />
+          <ChevronContainer theme={activeTheme}>
+            <FaChevronDown
+              color={activeTheme === "light" ? "#4caf50" : "#c8e972"}
+              size={14}
+            />
           </ChevronContainer>
         </VariablesAccordionHeader>
       </Drawer>

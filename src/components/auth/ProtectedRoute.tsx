@@ -10,7 +10,7 @@
  */
 
 import React from "react";
-import { useAppSelector } from "../../store";
+import { useAppSelector, type RootState } from "../../store";
 import { AuthPage } from "./AuthPage";
 import styled from "styled-components";
 
@@ -18,13 +18,13 @@ import styled from "styled-components";
  * Loading indicator container for authentication initialization
  * Displays centered loading message while Firebase auth state is being determined
  */
-const LoadingContainer = styled.div`
+const LoadingContainer = styled.div<{ theme: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   font-size: 1.2rem;
-  color: #666;
+  color: ${({ theme }) => (theme === "light" ? "#666666" : "#666")};
 `;
 
 /**
@@ -65,10 +65,11 @@ interface ProtectedRouteProps {
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   // Get authentication state from Redux store
   const { user, isInitialized } = useAppSelector((state) => state.auth);
+  const activeTheme = useAppSelector((state: RootState) => state.theme.theme);
 
   // Show loading indicator while Firebase auth is initializing
   if (!isInitialized) {
-    return <LoadingContainer>Loading...</LoadingContainer>;
+    return <LoadingContainer theme={activeTheme}>Loading...</LoadingContainer>;
   }
 
   // Redirect to authentication page if user is not logged in
